@@ -13,92 +13,160 @@ namespace COMP10066_Lab4
      * @author Joey Programmer
      */
 
+
+    //All Rules are from https://www.dofactory.com/reference/csharp-coding-standards
+    //Pascal Casing: Applied
+    //Camel Casing: Applied
+    //Hungarion Notation: Not Applied
+    //Screaming Caps: Not Applied
+    //Abbreviation Rules: Applied
+    //Pascal Casing for Abbreviations: Applied
+    //Underscores: Not Applied
+    //Predefined Type Names: Applied
+    //Implicit var rules: Applied
+    //Noun for class: Applied
+    //Prefix Interfaces: Applied
+    //Source File Naming: Applied
+    //Namespace Organization: Applied
+    //vertically align curly brackets: Applied
+    //Declare member variables: Applied
+    //Enum rules: Applied
+
     public class A4
     {
-        public static double Avg(List<double> x, bool incneg)
+        /// <summary>
+        /// this method calculate the average by calling a method that
+        /// calculates the sum, then checks how many elements are in the list
+        /// then divides the sum and the number of elements by eachother
+        /// to give us the average of the set
+        /// </summary>
+        /// <param name="testDataD"></param>
+        /// <param name="notNegative"></param>
+        /// <returns>the average value of the set</returns>
+        public static double CalculateAverage(List<double> testDataD, bool notNegative)
         {
-            double s = Sum(x, incneg);
-            int c = 0;
-            for (int i = 0; i < x.Count; i++)
+
+            double sum = CalculateSum(testDataD, notNegative);
+            int counter = 0;
+            for (int i = 0; i < testDataD.Count; i++)
             {
-                if (incneg || x[i] >= 0)
+                if (notNegative || testDataD[i] >= 0)
                 {
-                    c++;
+                    counter++;
                 }
             }
-            if (c == 0)
+            if (counter == 0)
             {
-                throw new ArgumentException("no values are > 0");
+                throw new ArgumentException("Test data cannot be empty");
             }
-            return s / c;
+            return sum / counter;
         }
-
-        public static double Sum(List<double> x, bool incneg)
+        /// <summary>
+        /// this method calaculates the total sum by adding each value 
+        /// in the set to a total value variable
+        /// </summary>
+        /// <param name="testDataD"></param>
+        /// <param name="notNegative"></param>
+        /// <returns>The total sum of the values in the set</returns>
+        public static double CalculateSum(List<double> testDataD, bool notNegative)
         {
-            if (x.Count < 0)
+            //if statment used to check if test data is empty, sends error message if true
+            if (testDataD.Count < 0)
             {
-                throw new ArgumentException("x cannot be empty");
+                throw new ArgumentException("Test data cannot be empty");
             }
+
 
             double sum = 0.0;
-            foreach (double val in x)
+            //foreach loops adds all values to a total value for each value in set
+            foreach (double value in testDataD)
             {
-                if (incneg || val >= 0)
+                if (notNegative || value >= 0)
                 {
-                    sum += val;
+                    sum += value;
                 }
             }
+
+            //returns the total value of all numbers in set 
             return sum;
         }
 
-        public static double Median(List<double> data)
+        /// <summary>
+        /// this method gets the value located in the middle of the set
+        /// this is done by sorted the set from greatest to least
+        /// then getting the number of elements in the set and dividing by 2
+        /// if number of element are odd it takes the the average of the number in the position
+        /// middle +1 and middle -1
+        /// </summary>
+        /// <param name="testDataD"></param>
+        /// <returns>the median of the set</returns>
+        public static double CalculateMedian(List<double> testDataD)
         {
-            if (data.Count == 0)
+            //if statment used to check if test data is empty, sends error message if true
+            if (testDataD.Count == 0)
             {
-                throw new ArgumentException("Size of array must be greater than 0");
+                throw new ArgumentException("Test data cannot be empty");
             }
 
-            data.Sort();
+            //sorts data greatest to least
+            testDataD.Sort();
 
-            double median = data[data.Count / 2];
-            if (data.Count % 2 == 0)
-                median = (data[data.Count / 2] + data[data.Count / 2 - 1]) / 2;
+            //finds the middle position of the set
+            double median = testDataD[testDataD.Count / 2];
+            //if the set is odd  it will take the average of the two numbers in position middle+1 and middle-1
+            if (testDataD.Count % 2 == 0)
+                median = (testDataD[testDataD.Count / 2] + testDataD[testDataD.Count / 2 - 1]) / 2;
 
+            //returns median
             return median;
         }
-
-        public static double SD(List<double> data)
+        /// <summary>
+        /// this method calculate the standard deviation by calling a method that calculates the average
+        /// then takes each value of the set subtracts it from the average and raises it to the power of 2
+        /// and adds the answer to a total variable
+        /// then the total is divided by the number of elements in the list -1 
+        /// and square rooted
+        /// </summary>
+        /// <param name="testDataD"></param>
+        /// <returns>the standard deviation of the set</returns>
+        public static double CalculateStandardDeviation(List<double> testDataD)
         {
-            if (data.Count <= 1)
+            //if the test set has 1 or less numbers in the set throws error message
+            if (testDataD.Count <= 1)
             {
                 throw new ArgumentException("Size of array must be greater than 1");
             }
 
-            int n = data.Count;
-            double s = 0;
-            double a = Avg(data, true);
+            int ListSize = testDataD.Count;
+            double total = 0;
+            double average = CalculateAverage(testDataD, true);
 
-            for (int i = 0; i < n; i++)
+            //for loop adds all (values- average)^2 to a total 
+            for (int i = 0; i < ListSize; i++)
             {
-                double v = data[i];
-                s += Math.Pow(v - a, 2);
+                double value = testDataD[i];
+                total += Math.Pow(value - average, 2);
             }
-            double stdev = Math.Sqrt(s / (n - 1));
-            return stdev;
+
+            //square roots the (total/ sizeOfList -1) 
+            double standardDeviation = Math.Sqrt(total / (ListSize - 1));
+
+            //returns standard deviation
+            return standardDeviation;
         }
 
         // Simple set of tests that confirm that functions operate correctly
         static void Main(string[] args)
         {
-            List<Double> testDataD = new List<Double> { 2.2, 3.3, 66.2, 17.5, 30.2, 31.1 };
+            List<double> testDataD = new List<double> { 2.2, 3.3, 66.2, 17.5, 30.2, 31.1 };
 
-            Console.WriteLine("The sum of the array = {0}", Sum(testDataD, true));
+            Console.WriteLine("The sum of the array = {0}", CalculateSum(testDataD, true));
 
-            Console.WriteLine("The average of the array = {0}", Avg(testDataD, true));
+            Console.WriteLine("The average of the array = {0}", CalculateAverage(testDataD, true));
 
-            Console.WriteLine("The median value of the Double data set = {0}", Median(testDataD));
+            Console.WriteLine("The median value of the Double data set = {0}", CalculateMedian(testDataD));
 
-            Console.WriteLine("The sample standard deviation of the Double test set = {0}\n", SD(testDataD));
+            Console.WriteLine("The sample standard deviation of the Double test set = {0}\n", CalculateStandardDeviation(testDataD));
         }
     }
 }
